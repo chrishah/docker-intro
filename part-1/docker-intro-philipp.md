@@ -171,15 +171,61 @@ As already mentioned `docker run` automatically pulls an image if it is not alre
 ***Be explicit with image versions***
 > It is good practice to always specify the version of an image when creating a container. This ensures reproducibility and the same behavior during every run. In the case of hello-world we did not specify a version, which always results in docker checking for and pulling (if necessary) the `latest` version. This could break your workflow if the image is updated because if a newer version is available it will automatically download it. This new image then replaces the old one.
 
+## Managing containers and images
 
-### Executing commands within a container
+Once you have accumulated many images and run different containers it becomes important to manage the available images and running (or stopped) containers. The `docker` command also comes to the rescue here
+
+### List available images
+
+To list all images off which you can base containers you can use the `docker images` command:
+
+```
+(host)-$ docker images
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+hello-world                       latest              bf756fb1ae65        3 months ago        13.3kB
+ubuntu                            18.04               ccc6e87d482b        3 months ago        64.2MB
+(host)-$
+```
+
+This gives an overview of your downloaded images as well as intermediate images which are created when you build them yourself. Each image has an ID consiting of letters and numbers. This ID can be used to remove an image. For example you could run `docker image rm bf756fb1ae65` to remove the hello-world image from your computer. Image removal only works when there are no containers relying on that image.
+
+### List containers
+
+To list all running containers you can execute `docker container ls`. If you have no currently running containers the output from this command will be an empty list. 
+```
+(host)-$ docker container ls
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+(host)-$
+```
+
+We can also list all containers regardless if they are currently running or not.
+
+```
+(host)-$ docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                           PORTS               NAMES
+36f65c44b177        ubuntu:18.04        "sleep 30"               9 minutes ago       Exited (0) 8 minutes ago                             intelligent_lewin
+52c9c0117a2f        hello-world         "/hello"                 16 minutes ago      Exited (0) 16 minutes ago                            tender_germain
+22c3563c46a5        ubuntu:18.04        "/bin/bash"              About an hour ago   Exited (0) About an hour ago                         happy_burnell
+3a2e784dd2f8        hello-world         "/hello"                 About an hour ago   Exited (0) About an hour ago                         loving_hermann
+```
+
+Depending on how much you have already played around there may be a looong list of containers that have been run before and after a while it gets messy. Two things can help here:
+- name your containers with the `--name` flag
+- tell docker to remove containers after they're done executing with the `--rm` flag.
+
+We will use those two right away, but first let me remove all containers that are done executing.
+```
+(host)-$ docker rm $(docker container ls -a | grep "Exited " | cut -d " " -f 1) 
+```
+
+## Executing commands within a container
 
 Lets try something a bit more advanced: In the last section we saw how the hello-world container displayed some text on our terminal screen before it exits back to our command prompt. This very simple container only runs for a few seconds and the only thing it does is to display the message above. However, often it is desired to change the execution of a container as it runs or run specific commands inside the container. In fact this is probably one of the most common use cases for many scientists. Let's see how we can execute (almost) any command inside a docker container:
 
-For this example we will use a more complete container based on the official ubuntu:18.04 image:
+For this example we will use a more complete container (note that we will also name the container) based on the official ubuntu:18.04 image:
 
 ```
-(host)-$ docker run ubuntu:18.04 sleep 10
+(host)-$ docker run --name ${USER}_sleeps ubuntu:18.04 sleep 10
 (host)-$
 ```
 
@@ -190,7 +236,7 @@ Here are some additional examples with the ubuntu:18.04 container.
 Show the OS version installed in the container:
 
 ```
-(host)-$ docker run ubuntu:18.04 cat /etc/os-release
+(host)-$ docker run --rm ubuntu:18.04 cat /etc/os-release
 NAME="Ubuntu"
 VERSION="18.04.3 LTS (Bionic Beaver)"
 ID=ubuntu
@@ -208,7 +254,7 @@ UBUNTU_CODENAME=bionic
 List the content of the `/` directory in the container:
 
 ```
-(host)-$ docker run ubuntu:18.04 ls /
+(host)-$ docker run --rm ubuntu:18.04 ls /
 bin
 boot
 dev
@@ -231,16 +277,19 @@ var
 ```
 
 
-### Working inside a container:
+## Working inside a container:
 
 
-You may ask yourself now how it would work if you wanted to run multiple commands inside your container or how you could prevent your container from exiting immediately after execution of a command. This can be done by providing the `-i -t`flags (usually used as `-it`). 
+You may ask yourself now how it would work if you wanted to run multiple commands inside your container or how you could prevent your container from exiting immediately after execution of a command. This can be done by providing the `-i -t` flags (usually used as `-it`). 
 
 Lets get inside an ubuntu container:
 
 ```
-(host)-$ docker run -it ubuntu:18.04
+(host)-$ docker run -it --name ${USER}s_ubuntu ubuntu:18.04
 root@f11c02f856a7:/#
+
+
+root@f11c02f856a7:/# exit
 ```
 
 Inside our container we can do all kinds of things: Create files, install software download files from the internet etc. All of this works in a familiar ubuntu environment provided by Docker.
@@ -248,78 +297,36 @@ Inside our container we can do all kinds of things: Create files, install softwa
 ***What happens in the container, stays in the container***
 > Changes you make in interactivte mode inside a container are restricted to the currently running container. Each docker run command will spawn a new container instance which only contains what is in the underlying Docker image.
 
+## Restarting stopped containers
 
-## Managing containers and images
-
-
-Once you have accumulated many images and run different containers it becomes important to manage the available images and running (or stopped) containers. The `docker` command also comes to the rescue here:
-
-To list all running containers you can execute `docker container ls`. If you have no currently running containers the output from this command will be an empty list. Here is an example showing how the output changes:
-
-```
-(host)-$ docker container ls
-CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-(host)-$ docker run -d ubuntu:18.04 sleep 30
-36f65c44b177bb23c5e4ffb9f891b85353436b824c5bcfba1b38080e29a47fe8
-(host)-$ docker container ls
-CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-36f65c44b177        ubuntu:18.04        "sleep 30"          4 seconds ago       Up 2 seconds                            intelligent_lewin
-(host)-$
-```
-
-As you can see the first call of `docker container ls` shows that there is currently no running containers. When we run the sleep command inside an ubuntu container and then look at the output of `docker container ls` again we get information about it.
-
-***Background execution of containers***
-> The `-d` flag in the docker run command sends a container to the background so that it continues runnning and we can continue to work in our terminal. `-d` is short for detach. The output of the container is detached from the current terminal.
-
-We can also list all containers regardless if there are currently running or not.
+Let's see if the containers we just ran are still there.
 
 ```
 (host)-$ docker container ls -a
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                           PORTS               NAMES
-36f65c44b177        ubuntu:18.04        "sleep 30"               9 minutes ago       Exited (0) 8 minutes ago                             intelligent_lewin
-52c9c0117a2f        hello-world         "/hello"                 16 minutes ago      Exited (0) 16 minutes ago                            tender_germain
-22c3563c46a5        ubuntu:18.04        "/bin/bash"              About an hour ago   Exited (0) About an hour ago                         happy_burnell
-3a2e784dd2f8        hello-world         "/hello"                 About an hour ago   Exited (0) About an hour ago                         loving_hermann
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES
+86649d0e7bf4        ubuntu:18.04        "/bin/bash"         3 seconds ago       Exited (0) 2 seconds ago                        user3s_ubuntu
+81df4b1c0577        ubuntu:18.04        "/bin/bash"         9 seconds ago       Exited (0) 6 seconds ago                        user2s_ubuntu
+66e3531f60d6        ubuntu:18.04        "/bin/bash"         15 seconds ago      Exited (0) 12 seconds ago                       user1s_ubuntu
+...
 ```
 
-### Restarting stopped containers
-
-From the above command we see that all containers we ran are still there, they have not disappeared they have just stopped running. Docker saves a copy of each executed container. Consequently the changes we made inside the ubuntu container previously should still be there somewhere. We just have to find the correct container and execute it again to get to our files again. The docker command has an option to restart stopped containers. 
-
-For example if you would like to get inside the an existing ubuntu container we could run:
-
+They have not disappeared (because we did not use the `--rm` flag) - they have just stopped running. Docker saves a copy of each executed container. Consequently the changes we made inside the ubuntu container previously should still be there somewhere. We just have to find the correct container and execute it again to get to our files again. The docker command has an option to restart stopped containers. 
+And we can do that based on the name of the container.
 ```
-(host)-$ docker start -ia 36f65c44b177
+(host)-$ docker start -ia user1s_ubuntu
 ```
 
-Docker conveniently names each container with a random relatively human readable name which can be used instead of the complicated container ID. The above command is thus equivalent with, e.g.:
+Or based on the unique container ID.
 
 ```
-(host)-$ docker start -ia happy_burnell
+(host)-$ docker start -ia 66e3531f60d6
 ```
 
 ***info***
 > Note that -ia is the equivalent to -it in docker start.
-	
-Similar to starting stopped containers you can also stop running containers with `docker stop`.
 
-***info***
-> If you don't want to keep a copy of the container when it runs you can add the flag `--rm` to your `docker run` command.
-	
-### List available images
-
-To list all images off which you can base containers you can use the `docker images` command:
-
-```
-(host)-$ docker images
-REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
-hello-world                       latest              bf756fb1ae65        3 months ago        13.3kB
-ubuntu                            18.04               ccc6e87d482b        3 months ago        64.2MB
-(host)-$
-```
-
-This gives an overview of your downloaded images as well as intermediate images which are created when you build them yourself. Each image has an ID consiting of letters and numbers. This ID can be used to remove an image. For example you could run `docker image rm bf756fb1ae65` to remove the hello-world image from your computer. Image removal only works when there are no containers relying on that image.
+***Reminder***
+> If you don't want to keep a copy of the container after it's done you can add the flag `--rm` to your `docker run` command.
 
 ## Sharing data with the host system
 
@@ -377,6 +384,9 @@ With `docker volume ls` we can list our current volumes:
 (host)-$ docker volume ls
 DRIVER              VOLUME NAME
 local               ubuntu_data
+local               user1_data
+local               user2_data
+local               user3_data
 ```
 
 ***Volumes are handy***
@@ -386,7 +396,7 @@ local               ubuntu_data
 After we created the volume we can tell Docker to make it available when a container is run. This is done like this:
 
 ```
-(host)-$ docker run -it --mount type=volume,source=${USER}_data,target=/data ubuntu:18.04
+(host)-$ docker run -it --rm --mount type=volume,source=${USER}_data,target=/data ubuntu:18.04
 ```
 
 Now, inside the container we can move to the bound volume and create some dummy data:
@@ -403,7 +413,7 @@ root@eca8560a6bd1:/data# exit
 We can now run a completely different container, have it include the same volume and then list its contents:
 
 ```
-(host)-$ docker run --rm -it -v ${USER}_data:/data alpine:3.11
+(host)-$ docker run -it --rm --mount type=volume,source=${USER}_data,target=/data alpine:3.11
 Unable to find image 'alpine:3.11' locally
 3.11: Pulling from library/alpine
 cbdbe7a5bc2a: Pull complete
@@ -423,8 +433,6 @@ To remove a volume you can run:
 (host)-$ docker volume rm ${USER}_data
 ubuntu_data
 ```
-
-
 
 # Summary
 
