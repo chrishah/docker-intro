@@ -120,7 +120,7 @@ Run 'docker COMMAND --help' for more information on a command.
 
 This may look overwhelming at first but it illustrates that Docker is capable of many different things and there are many different ways how to do them. Also, during your daily docker use, you may actually only need a subset of what is listed above. Because Docker can do so many different things the `docker` command is organized in sub-commands which correspond to different aspects of Docker. Docker sub-commands can be further customized with traditional command-line flags.
 
->***Getting help***
+***Getting help***
 > If you would like to know about the different options you can use the docker command like so to display additional help: `docker COMMAND --help`. For example `docker run --help` will only display options associated with the docker run command.
 
 ### Lets run our first container from a pre-built image
@@ -159,9 +159,8 @@ For more examples and ideas, visit:
 
 A lot is going on when this command is executed apart from printing the traditional "Hello" message. It also provides some additional information about what just happened: As you can see from the output above when executing the command `docker run hello-world:latest` `docker` communicates with the docker deamon and requests a container of the hello-world image. The docker daemon realized that this image is not yet available on our computer, so it downloads it from the [Docker Hub](https://hub.docker) (this is usually referred to as *pulling*). The Docker daemon stores the hello-world image on the host and creates a virtualized runtime environment (the *container*). When this container is executed it can produce some output (in case of hello-world this is the message above), which is displayed on the terminal screen.
 
-!!! info "DockerHub"
-
-	Docker Hub is a large online repository of custom Docker images made by other users. We will have a closer look on how it works in the next session. 
+***DockerHub***
+> Docker Hub is a large online repository of custom Docker images made by other users. We will have a closer look on how it works in the next session. 
 
 As already mentioned `docker run` automatically pulls an image if it is not already available on the host. It is however also possible to just pull it without immediately creating a container. This can be done with `docker pull`. We will now pull an plain ubuntu image. Note also that we are pulling a specific version (which is indicated by the colon after the image name). 
 
@@ -169,9 +168,8 @@ As already mentioned `docker run` automatically pulls an image if it is not alre
 (host)-$ docker pull ubuntu:18.04
 ```
 
-!!! info "Be explicit with image versions"
-
-	It is good practice to always specify the version of an image when creating a container. This ensures reproducibility and the same behavior during every run. In the case of hello-world we did not specify a version, which always results in docker checking for and pulling (if necessary) the `latest` version. This could break your workflow if the image is updated because if a newer version is available it will automatically download it. This new image then replaces the old one.
+***Be explicit with image versions***
+> It is good practice to always specify the version of an image when creating a container. This ensures reproducibility and the same behavior during every run. In the case of hello-world we did not specify a version, which always results in docker checking for and pulling (if necessary) the `latest` version. This could break your workflow if the image is updated because if a newer version is available it will automatically download it. This new image then replaces the old one.
 
 
 ### Executing commands within a container
@@ -247,9 +245,8 @@ root@f11c02f856a7:/#
 
 Inside our container we can do all kinds of things: Create files, install software download files from the internet etc. All of this works in a familiar ubuntu environment provided by Docker.
 
-!!! info
-
-	Changes you make in interactivte mode inside a container are restricted to the currently running container. Each docker run command will spawn a new container instance which only contains what is in the underlying Docker image.
+***What happens in the container, stays in the container***
+> Changes you make in interactivte mode inside a container are restricted to the currently running container. Each docker run command will spawn a new container instance which only contains what is in the underlying Docker image.
 
 
 ## Managing containers and images
@@ -272,9 +269,8 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 As you can see the first call of `docker container ls` shows that there is currently no running containers. When we run the sleep command inside an ubuntu container and then look at the output of `docker container ls` again we get information about it.
 
-!!! info "Background execution of containers"
-
-	The `-d` flag in the docker run command sends a container to the background so that it continues runnning and we can continue to work in our terminal. `-d` is short for detach. The output of the container is detached from the current terminal.
+***Background execution of containers***
+> The `-d` flag in the docker run command sends a container to the background so that it continues runnning and we can continue to work in our terminal. `-d` is short for detach. The output of the container is detached from the current terminal.
 
 We can also list all containers regardless if there are currently running or not.
 
@@ -303,15 +299,13 @@ Docker conveniently names each container with a random relatively human readable
 (host)-$ docker start -ia happy_burnell
 ```
 
-!!! info
-
-	Note that -ia is the equivalent to -it in docker start.
+***info***
+> Note that -ia is the equivalent to -it in docker start.
 	
 Similar to starting stopped containers you can also stop running containers with `docker stop`.
 
-!!! info
-
-	If you don't want to keep a copy of the container when it runs you can add the flag `--rm` to your `docker run` command.
+***info***
+> If you don't want to keep a copy of the container when it runs you can add the flag `--rm` to your `docker run` command.
 	
 ### List available images
 
@@ -349,9 +343,8 @@ DRIVER              VOLUME NAME
 local               ubuntu_data
 ```
 
-!!! info
-
-	Volumes are especially handy to share data between more complex setups with multiple containers. e.g. databases
+***Volumes are handy***
+> Volumes are especially handy to share data between more complex setups with multiple containers. e.g. databases
 	
 
 After we created the volume we can tell Docker to make it available when a container is run. This is done like this:
