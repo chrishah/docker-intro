@@ -225,7 +225,7 @@ Lets try something a bit more advanced: In the last section we saw how the hello
 For this example we will use a more complete container (note that we will also name the container) based on the official ubuntu:18.04 image:
 
 ```
-(host)-$ docker run --name ${USER}_sleeps ubuntu:18.04 sleep 10
+(host)-$ docker run --rm ubuntu:18.04 sleep 10
 (host)-$
 ```
 
@@ -282,11 +282,11 @@ var
 
 You may ask yourself now how it would work if you wanted to run multiple commands inside your container or how you could prevent your container from exiting immediately after execution of a command. This can be done by providing the `-i -t` flags (usually used as `-it`). 
 
-Lets get inside an ubuntu container:
+Lets get inside an ubuntu container (note that this time we will name it, but ommit the `--rm` flag):
 
 ```
 (host)-$ docker run -it --name ${USER}s_ubuntu ubuntu:18.04
-root@f11c02f856a7:/#
+root@f11c02f856a7:/# #do whatever you want
 
 
 root@f11c02f856a7:/# exit
@@ -310,14 +310,14 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 ...
 ```
 
-They have not disappeared (because we did not use the `--rm` flag) - they have just stopped running. Docker saves a copy of each executed container. Consequently the changes we made inside the ubuntu container previously should still be there somewhere. We just have to find the correct container and execute it again to get to our files again. The docker command has an option to restart stopped containers. 
-And we can do that based on the name of the container.
+They have not disappeared (because we did not use the `--rm` flag) - they have just stopped running and we can identify them based on the names we specified. Docker saves a copy of each executed container. Consequently the changes we made inside the ubuntu container previously (if any) should still be there somewhere. We just have to find the correct container and execute it again to get to our files again. The docker command has an option to restart stopped containers. 
+
+We can do that based on the name of the container.
 ```
 (host)-$ docker start -ia user1s_ubuntu
 ```
 
 Or based on the unique container ID.
-
 ```
 (host)-$ docker start -ia 66e3531f60d6
 ```
@@ -334,7 +334,7 @@ Often, it is desired to share data from the host computer with the container. Fo
 
 ### Mounting directories
 
-It is often also necessary to copy files between the host and the container or access file from the host via the container. 
+It is often necessary to copy files between the host and the container or access files from the host via the container. 
 You can bind-mount directories directly to your containers using the `-v` flag in `docker run`.
 One could say the `-v` flag works like this: Take the location on the host on left side of the colon and make it available as new directory in the container, specified on the right side of the colon. Here the right side can be a longer path as well, it is however important that the path is absolute (starts with / ). This is referred to as binding, mounting or bind-mounting. You will come across all three terms online.
 
@@ -344,11 +344,11 @@ One could say the `-v` flag works like this: Take the location on the host on le
 
 This command will mount the current working directory on your host to the `/data` folder inside the ubuntu container. You can now make changes to that folder inside your container and the changes will be synced with the folder on the host computer.
 
-We will now create a `testfile_from_host` in the current directory. Then we will start a container mounting this directory. Inside the container we will create another `testfile_from_container`. All changes persist also when we exit the container:
+We will now create a `testfile_from_host` in the current directory using the host computer. Then we will start a container mounting this directory. Inside the container we will create another `testfile_from_container` from within the container. All changes persist also when we exit the container:
 
 ```
 (host)-$ pwd
-/Users/sinnafoch/Dropbox/Philipp/docker-intro
+/home/ubuntu
 (host)-$ touch testfile_from_host
 (host) $ ls
 testfile_from_host
