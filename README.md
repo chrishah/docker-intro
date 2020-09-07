@@ -1,7 +1,8 @@
 # docker-intro
-A short introduction to using Docker for Bioinformatics
 
-__Disclaimer__: Parts of the sessions below were inspired and indeed reuse examples from the Cyverse documentation (Release 0.2.0; March 05, 2020; <a href="https://learning.cyverse.org/_/downloads/foss-2020/en/latest/pdf/" title="Cyverse documentation pdf" target="_blank" >pdf</a>).
+# A short introduction to using Docker for Bioinformatics
+
+## Prerequisites
 
 The following sessions assumes that you have Docker running on your computer (we tested with Docker version 18.09.7, build 2d0083d).
 
@@ -9,6 +10,7 @@ If you're running on a Linux host it further assumes that you have it set up in 
 
 ## Hands-on introduction to Docker
 
+Let's get cracking, with:
 - [Part 1](https://github.com/chrishah/docker-intro/tree/master/part-1/docker-intro-philipp.md): Running and interacting with prebuild images
 - [Part 2](https://github.com/chrishah/docker-intro/tree/master/part-2/build-and-manage.md): Build and manage your own images
 

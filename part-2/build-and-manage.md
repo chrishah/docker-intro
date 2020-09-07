@@ -16,7 +16,7 @@ As an example I have chosen `BLAST`, which is used to find regions of similarity
 Since you've already used it in the previous session we will be starting from a base Ubuntu image. Let's start a container interactively.
 
 ```bash
-(host)-$ docker run -it -h my_manual_blast --name my_manual_blast ubuntu:18.04
+(host)-$ docker run -it -h my_manual_blast --name ${USER}s_manual_blast ubuntu:18.04
 ```
 Note the additional flags I am using - these are optional:
 
@@ -99,18 +99,18 @@ Let's exit the container and see what we can do. The following will bring your o
 root@my_manual_blast:/$ exit
 ```
 
-Now, if you type `docker container ls -a` (in older docker versions this is the same as `docker ps -a`) you will see the list of all containers that you ran so far (the ones that are running as well as those which are already exited), including `my_manual_blast`, which you have just exited, on top.
+Now, if you type `docker container ls -a` (in older docker versions this is the same as `docker ps -a`) you will see the list of all containers that you ran so far (the ones that are running as well as those which are already exited), including `user*s_manual_blast`, which you have just exited.
 
-We can convert this container, including the changes you made to the base Ubuntu image to a new image - I will call it `manual_blast_image`. Docker has a subroutine for that, called `commit`. You need to also provide a commit message via the `-m` flag. This is usually short information about how you changed the image, so when you look at it later you will be able to remember what the changes were. 
+We can convert this container, including the changes you made to the base Ubuntu image to a new image - I will call it `user*s_manual_blast_image`. Docker has a subroutine for that, called `commit`. You need to also provide a commit message via the `-m` flag. This is usually short information about how you changed the image, so when you look at it later you will be able to remember what the changes were. 
 ```bash
-(host)-$ docker commit -m "ubuntu + blast" my_manual_blast manual_blast_image
+(host)-$ docker commit -m "ubuntu + blast" ${USER}s_manual_blast ${USER}s_manual_blast_image
 ```
 
 Great! Now the image should show up if you type `docker image ls`.
 
 You can use it like we've done before. The `--rm` just tells Docker to remove the container once you're done. This is handy, otherwise you will accumulate excited containers very fast. Below I dropped the `--name` flag, because it's optional and at this stage I don't care which name the system gives to the container while it's running.
 ```bash
-(host)-$ docker run -it --rm -h manual_blast_image manual_blast_image
+(host)-$ docker run -it --rm -h my_manual_blast ${USER}s_manual_blast_image
 
 root@my_manual_blast:/$ blastn -h
 USAGE
@@ -122,7 +122,7 @@ root@manual_blast_image:/$ exit
 
 You can use the image also like an executable, rather than interactively, try:
 ```bash
-(host)-$ docker run --rm manual_blast_image blastn -h
+(host)-$ docker run --rm ${USER}s_manual_blast_image blastn -h
 ```
 
 ## Automatic Build
@@ -154,7 +154,7 @@ Note that these are the exact same commands that we just ran interactively. We j
 
 Let's try to build the image as instructed in the Dockerfile. Docker has a command for that. 
 ```bash
-(host)-$ docker build -t automatic_blast_image .
+(host)-$ docker build -t ${USER}s_automatic_blast_image .
 ```
 Note the flag `-t` which I use to name the image `automatic_blast_image`. The `.` is mandatory and just tells it to look for a file called `Dockerfile` (per default) in your current working directory. This behavior can be changed, but you can try to figure that one out for yourself if you want.
 
@@ -171,14 +171,14 @@ RUN apt-get install -y ncbi-blast+
 Try again.
 
 ```bash
-(host)-$ docker build -t automatic_blast_image .
+(host)-$ docker build -t ${USER}s_automatic_blast_image .
 ```
 
 Looks good! Take a second to inspect the output Docker created and note that during the second build attempt Docker has not redone the update, but rather continued from from the first line in the Dockerfile that caused the error. 
 
 If you type `docker image ls` now, the image should exist. We can try it out, like so:
 ```bash
-(host)-$ docker run --rm automatic_blast_image blastn -h
+(host)-$ docker run --rm ${USER}s_automatic_blast_image blastn -h
 ```
 
 # Backup and share your container
@@ -187,16 +187,16 @@ If you type `docker image ls` now, the image should exist. We can try it out, li
 
 Docker allows you to create local backup of your custom image, that you can store away safely somewhere and/or share with your mates. Let's do that for the last image we've built.
 ```bash
-(host)-$ docker save automatic_blast_image > automatic_blast_image.tar
+(host)-$ docker save ${USER}s_automatic_blast_image > ${USER}s_automatic_blast_image.tar
 ```
 You can restore the image any time from the archive that has been created. Let's live dangerously and remove the image - pretend it was an accident.
 ```bash
-(host)-$ docker image rm automatic_blast_image
+(host)-$ docker image rm ${USER}s_automatic_blast_image
 ```
 
 Check `docker image ls` - Ups - it's gone. But, we can reload it from the archive.
 ```bash
-(host)-$ docker load -i automatic_blast_image.tar
+(host)-$ docker load -i ${USER}s_automatic_blast_image.tar
 ```
 
 ## Share your image with the world - Dockerhub
@@ -207,16 +207,16 @@ In order to use it you'll need to register. With the free registration you can d
 
 ### Manual push
 
-I have made public repository to show you how to deposit your custom image on Dockerhub - it's <a href="https://hub.docker.com/repository/docker/chrishah/docker-training-push-demo" target="_blank" >here</a>.
+I have made public repository to show you how to deposit custom images on Dockerhub - it's <a href="https://hub.docker.com/repository/docker/chrishah/docker-training-push-demo" target="_blank" >here</a>.
 
-Let's deposit our image there. In order for Dockerhub to know where the image should go I need to rename it to match the name of the repository which is usually something like `username/reponame`. My Dockerhub username is `chrishah`, and I called the repo `docker-training-push-demo`. Note that I will also give the image a specific tag `v28042020`. This could be anything as long as it's in one word an all lower case.
+Let's deposit our image there. In order for Dockerhub to know where the image should go I need to rename it to match the name of the repository which is usually something like `username/reponame`. My Dockerhub username is `chrishah`, and I called the repo `docker-training-push-demo`. Note that I will also give the image a specific tag `v07092020`. This could be anything as long as it's in one word an all lower case.
 ```bash
-(host)-$ docker tag automatic_blast_image chrishah/docker-training-push-demo:v28042020
+(host)-$ docker tag automatic_blast_image chrishah/docker-training-push-demo:v07092020
 ```
 
 Now we can push it Dockerhub.
 ```bash
-(host)-$ docker push chrishah/docker-training-push-demo:v28042020
+(host)-$ docker push chrishah/docker-training-push-demo:v07092020
 ```
 
 Done! Check it out on <a href="https://hub.docker.com/repository/docker/chrishah/docker-training-push-demo" target="_blank" >Dockerhub</a>.
@@ -224,12 +224,12 @@ Done! Check it out on <a href="https://hub.docker.com/repository/docker/chrishah
 This image can now be pulled and used by anybody!
 
 ```bash
-(host)-$ docker run --rm chrishah/docker-training-push-demo:v28042020
+(host)-$ docker run --rm chrishah/docker-training-push-demo:v07092020
 ```
 
 Also, if you happen to be using `Singularity` rather than `Docker`, this image is compatible. Assuming you have `Singularity` up and running you could just do the following (add `--disable-cache` to pull afresh):
 ```bash
-(host)-$ singularity run docker://chrishah/docker-training-push-demo:v28042020 blastn -h
+(host)-$ singularity run docker://chrishah/docker-training-push-demo:v07092020 blastn -h
 ```
 
 ### Automated build
@@ -239,6 +239,28 @@ A very neat feature feature in my opinion is that Dockerhub allows you to link i
 Check out this example <a href="https://hub.docker.com/r/chrishah/ncbi-blast" target="_blank" >here</a>.
 
 # Demos
+
+## Running an RStudio server
+
+The demo is inspired by <a href="http://ropenscilabs.github.io/r-docker-tutorial/" title="ropenscilab R Docker tutorial (last accessed 24.04.2020)" target="_blank" >this</a> tutorial and relies on images provided by <a href="https://www.rocker-project.org/" title="Rocker Project Main" target="_blank" >The Rocker Project</a> (see also the <a href="https://github.com/rocker-org/rocker/wiki" title="Rocker Project Github Wiki" target="_blank" >Github Wiki</a>).
+
+Start the RStudio server Docker container like so:
+```bash
+(host)-$ docker run -e PASSWORD=yourpassword --rm -p 8787:8787 rocker/rstudio
+```
+
+Then scoot to `http://localhost:8787` in your webbrowser. Enter your username `rstudio` (per default) and password we've set it to `yourpassword` when we called the container.
+
+## Jupyter Notebook
+
+Cyverse US has created a number of Docker images and deposited the contexts on Github <a href="https://github.com/cyverse-vice/" target="_blank" >here</a>.
+
+Very nice are for example their Jupyterlab Servers in Docker containers. Try the following, but note that this image is rather large and may take a while to download, depending on your download speed..
+```bash
+(host)-$ docker run -it --rm -v /$HOME:/app --workdir /app -p 8888:8888 -e REDIRECT_URL=http://localhost:8888 cyversevice/jupyterlab-scipy
+```
+
+Once the download has finished and the server started running move to `http://localhost:8888` in your webbrowser. Cool, no?
 
 ## Mkdocs server
 
@@ -287,27 +309,6 @@ Shut down the running server by pressing `CTRL+C`.
 
 _Note:_ If you cloned the context of the test site using the method above, you might need to change permissions on the directory in case you want to modify it, like so `sudo chown -R $USER:$USER mkdocs-readthedocs-docker-demo/`.
 
-## Running an RStudio server
-
-The demo is inspired by <a href="http://ropenscilabs.github.io/r-docker-tutorial/" title="ropenscilab R Docker tutorial (last accessed 24.04.2020)" target="_blank" >this</a> tutorial and relies on images provided by <a href="https://www.rocker-project.org/" title="Rocker Project Main" target="_blank" >The Rocker Project</a> (see also the <a href="https://github.com/rocker-org/rocker/wiki" title="Rocker Project Github Wiki" target="_blank" >Github Wiki</a>).
-
-Start the RStudio server Docker container like so:
-```bash
-(host)-$ docker run -e PASSWORD=yourpassword --rm -p 8787:8787 rocker/rstudio
-```
-
-Then scoot to `http://localhost:8787` in your webbrowser. Enter your username `rstudio` (per default) and password we've set it to `yourpassword` when we called the container.
-
-## Jupyter Notebook
-
-Cyverse US has created a number of Docker images and deposited the contexts on Github <a href="https://github.com/cyverse-vice/" target="_blank" >here</a>.
-
-Very nice are for example their Jupyterlab Servers in Docker containers. Try the following, but note that this image is rather large and may take a while to download, depending on your download speed..
-```bash
-(host)-$ docker run -it --rm -v /$HOME:/app --workdir /app -p 8888:8888 -e REDIRECT_URL=http://localhost:8888 cyversevice/jupyterlab-scipy
-```
-
-Once the download has finished and the server started running move to `http://localhost:8888` in your webbrowser. Cool, no?
 
 # Links
  - <a href="https://hub.docker.com/" title="Dockerhub" target="_blank">Dockerhub</a>
