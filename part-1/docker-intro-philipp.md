@@ -120,8 +120,7 @@ Run 'docker COMMAND --help' for more information on a command.
 
 This may look overwhelming at first but it illustrates that Docker is capable of many different things and there are many different ways how to do them. Also, during your daily docker use, you may actually only need a subset of what is listed above. Because Docker can do so many different things the `docker` command is organized in sub-commands which correspond to different aspects of Docker. Docker sub-commands can be further customized with traditional command-line flags.
 
-***Getting help***
-
+>***Getting help***
 > If you would like to know about the different options you can use the docker command like so to display additional help: `docker COMMAND --help`. For example `docker run --help` will only display options associated with the docker run command.
 
 ### Lets run our first container from a pre-built image
