@@ -1,6 +1,6 @@
 # Hands on with Docker - Running and interacting with prebuild images
 
-__Disclaimer__: The following session was designed by my esteemed colleage Philipp Resl [@reslp](https://github.com/reslp).
+__Disclaimer__: The following session was designed by my esteemed colleague Philipp Resl [@reslp](https://github.com/reslp).
 
 The following session assumes that you have Docker running on your computer (we tested with Docker version 18.09.7, build 2d0083d).
 If you're running on a Linux host it further assumes that you have it set up in such a way that you don't have to prepend `sudo` to the `docker` command each time. There is a number of ways you can do that, e.g. by creating a docker group and adding your user to it or by running the Docker daemon as a non-root user (find some more info/instructions <a href="https://docs.docker.com/engine/install/linux-postinstall/" title="Post-installation steps for Linux (last accessed 24.04.2020)" target="_blank">here</a>). If for some reason you don't want to or can do any of these things, all of the below should also work if you simply prepend `sudo` to the `docker` command.
@@ -120,9 +120,9 @@ Run 'docker COMMAND --help' for more information on a command.
 
 This may look overwhelming at first but it illustrates that Docker is capable of many different things and there are many different ways how to do them. Also, during your daily docker use, you may actually only need a subset of what is listed above. Because Docker can do so many different things the `docker` command is organized in sub-commands which correspond to different aspects of Docker. Docker sub-commands can be further customized with traditional command-line flags.
 
-!!! info "Getting help"
+***Getting help***
 
-	If you would like to know about the different options you can use the docker command like so to display additional help: `docker COMMAND --help`. For example `docker run --help` will only display options associated with the docker run command.
+> If you would like to know about the different options you can use the docker command like so to display additional help: `docker COMMAND --help`. For example `docker run --help` will only display options associated with the docker run command.
 
 ### Lets run our first container from a pre-built image
 
@@ -263,7 +263,7 @@ To list all running containers you can execute `docker container ls`. If you hav
 ```
 (host)-$ docker container ls
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-$ docker run -d ubuntu:18.04 sleep 30
+(host)-$ docker run -d ubuntu:18.04 sleep 30
 36f65c44b177bb23c5e4ffb9f891b85353436b824c5bcfba1b38080e29a47fe8
 (host)-$ docker container ls
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
@@ -323,7 +323,7 @@ To list all images off which you can base containers you can use the `docker ima
 REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
 hello-world                       latest              bf756fb1ae65        3 months ago        13.3kB
 ubuntu                            18.04               ccc6e87d482b        3 months ago        64.2MB
-(host) $
+(host)-$
 ```
 
 This gives an overview of your downloaded images as well as intermediate images which are created when you build them yourself. Each image has an ID consiting of letters and numbers. This ID can be used to remove an image. For example you could run `docker image rm bf756fb1ae65` to remove the hello-world image from your computer. Image removal only works when there are no containers relying on that image.
@@ -414,10 +414,10 @@ We will now create a `testfile_from_host` in the current directory. Then we will
 ```
 (host)-$ pwd
 /Users/sinnafoch/Dropbox/Philipp/docker-intro
-(host) $ touch testfile_from_host
+(host)-$ touch testfile_from_host
 (host) $ ls
 testfile_from_host
-(host) $ docker run -it --rm -v $(pwd):/data ubuntu:18.04
+(host)-$ docker run -it --rm -v $(pwd):/data ubuntu:18.04
 root@a0f138701fc5:/# cd /data
 root@a0f138701fc5:/data# ls
 testfile_from_host
@@ -430,7 +430,8 @@ exit
 (host)-$ ls
 testfile_from_container testfile_from_host
 
-(host) $
+(host)-$
+
 ```
 
 # Summary
