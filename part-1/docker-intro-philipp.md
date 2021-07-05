@@ -215,7 +215,7 @@ Depending on how much you have already played around there may be a looong list 
 
 We will use those two right away, but first let me remove all containers that are done executing.
 ```
-(host)-$ docker rm $(docker container ls -a | grep "Exited " | cut -d " " -f 1) 
+(host)-$ docker container prune 
 ```
 
 ## Executing commands within a container
