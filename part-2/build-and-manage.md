@@ -251,6 +251,14 @@ Start the RStudio server Docker container like so:
 
 Then scoot to `http://localhost:8787` in your webbrowser. Enter your username `rstudio` (per default) and password we've set it to `yourpassword` when we called the container.
 
+If you also want to read/write files on your host from within the container, you can extend the above command, like so, e.g.:
+```bash
+(host)-$ docker run -d -e PASSWORD=yourpassword -e USERID=$UID --rm -v $(pwd):/working -w /working -p 8787:8787 rocker/rstudio
+```
+
+For an example Dockerfile you can use to build an Rstudio image that has some packages already pre-installed, see this [Dockerfile](https://github.com/chrishah/docker-intro/tree/master/Dockerfiles/Dockerfile). Incidentally, this is the setup I used for doing the Differential Expression analyses a few lectures ago.
+
+
 ## Jupyter Notebook
 
 Cyverse US has created a number of Docker images and deposited the contexts on Github <a href="https://github.com/cyverse-vice/" target="_blank" >here</a>.
