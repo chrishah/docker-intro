@@ -246,14 +246,14 @@ The demo is inspired by <a href="http://ropenscilabs.github.io/r-docker-tutorial
 
 Start the RStudio server Docker container like so:
 ```bash
-(host)-$ docker run -e PASSWORD=yourpassword --rm -p 8787:8787 rocker/rstudio
+(host)-$ docker run -e PASSWORD=yourpassword --rm -p 8787:8787 rocker/rstudio:4.0.3
 ```
 
 Then scoot to `http://localhost:8787` in your webbrowser. Enter your username `rstudio` (per default) and password we've set it to `yourpassword` when we called the container.
 
 If you also want to read/write files on your host from within the container, you can extend the above command, like so, e.g.:
 ```bash
-(host)-$ docker run -d -e PASSWORD=yourpassword -e USERID=$UID --rm -v $(pwd):/working -w /working -p 8787:8787 rocker/rstudio
+(host)-$ docker run -d -e PASSWORD=yourpassword -e USERID=$UID --rm -v $(pwd):/working -w /working -p 8787:8787 rocker/rstudio:4.0.3
 ```
 
 For an example Dockerfile you can use to build an Rstudio image that has some packages already pre-installed, see this [Dockerfile](https://github.com/chrishah/docker-intro/tree/master/Dockerfiles/Dockerfile). Incidentally, this is the setup I used for doing the Differential Expression analyses a few lectures ago.
@@ -265,7 +265,7 @@ Cyverse US has created a number of Docker images and deposited the contexts on G
 
 Very nice are for example their Jupyterlab Servers in Docker containers. Try the following, but note that this image is rather large and may take a while to download, depending on your download speed..
 ```bash
-(host)-$ docker run -it --rm -v /$HOME:/app --workdir /app -p 8888:8888 -e REDIRECT_URL=http://localhost:8888 cyversevice/jupyterlab-scipy
+(host)-$ docker run -it --rm -v /$HOME:/app --workdir /app -p 8888:8888 -e REDIRECT_URL=http://localhost:8888 cyversevice/jupyterlab-scipy:2.2.9
 ```
 
 Once the download has finished and the server started running move to `http://localhost:8888` in your webbrowser. Cool, no?
