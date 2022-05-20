@@ -270,6 +270,13 @@ Very nice are for example their Jupyterlab Servers in Docker containers. Try the
 
 Once the download has finished and the server started running move to `http://localhost:8888` in your webbrowser. Cool, no?
 
+Here's another one that has `snakemake` setup within it.
+```bash
+(host)-$ docker run -it --rm -v /$HOME:/app --workdir /app -p 8888:8888 -e REDIRECT_URL=http://localhost:8888 chrishah/snakemake-vice:v05062020 
+```
+
+
+
 ## Mkdocs server
 
 MkDocs (<a href=https://www.mkdocs.org/" target="_blank" >mkdocs.org</a>) is a neat tool for creating project documentation sites. Instead of installing and running it locally, why not build it into an image and run it from within a Docker container?
